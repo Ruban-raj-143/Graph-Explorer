@@ -1,0 +1,7 @@
+customer_id,name,group,status
+101,Arun,Billing,Active
+102,Meera,Engineering,Active
+103,Vikram,Support,Pending
+104,Pooja,Design,Active
+105,Karan,Product,Active
+106,Sneha,Sales,Inactive

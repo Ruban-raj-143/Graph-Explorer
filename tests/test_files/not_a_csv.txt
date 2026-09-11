@@ -1,0 +1,2 @@
+This is a plain text file, not a CSV formatted document.
+It should be rejected by the validation endpoint.
