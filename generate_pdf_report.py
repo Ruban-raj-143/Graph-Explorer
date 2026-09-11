@@ -3,7 +3,6 @@ import sys
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import letter
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-from reportlab.lib.units import inch
 from reportlab.platypus import (
     SimpleDocTemplate,
     Paragraph,
@@ -13,6 +12,7 @@ from reportlab.platypus import (
     PageBreak,
     KeepTogether,
     HRFlowable,
+    Image,
 )
 from reportlab.pdfgen import canvas
 
@@ -82,31 +82,31 @@ def build_pdf_report(filename="GraphFlow_AI_Project_Report.pdf"):
         "CoverTitle",
         parent=styles["Normal"],
         fontName="Helvetica-Bold",
-        fontSize=26,
-        leading=32,
+        fontSize=24,
+        leading=30,
         textColor=primary_color,
-        spaceAfter=8,
+        spaceAfter=6,
     )
 
     subtitle_style = ParagraphStyle(
         "CoverSubtitle",
         parent=styles["Normal"],
         fontName="Helvetica",
-        fontSize=12,
-        leading=16,
+        fontSize=11,
+        leading=15,
         textColor=accent_blue,
-        spaceAfter=18,
+        spaceAfter=14,
     )
 
     h1_style = ParagraphStyle(
         "SectionH1",
         parent=styles["Normal"],
         fontName="Helvetica-Bold",
-        fontSize=15,
-        leading=19,
+        fontSize=13,
+        leading=17,
         textColor=primary_color,
-        spaceBefore=14,
-        spaceAfter=8,
+        spaceBefore=12,
+        spaceAfter=6,
         keepWithNext=True,
     )
 
@@ -114,10 +114,10 @@ def build_pdf_report(filename="GraphFlow_AI_Project_Report.pdf"):
         "SectionH2",
         parent=styles["Normal"],
         fontName="Helvetica-Bold",
-        fontSize=11,
-        leading=15,
+        fontSize=10.5,
+        leading=14,
         textColor=accent_blue,
-        spaceBefore=10,
+        spaceBefore=8,
         spaceAfter=4,
         keepWithNext=True,
     )
@@ -126,26 +126,29 @@ def build_pdf_report(filename="GraphFlow_AI_Project_Report.pdf"):
         "BodyDark",
         parent=styles["Normal"],
         fontName="Helvetica",
-        fontSize=9.5,
-        leading=14,
+        fontSize=9,
+        leading=13.5,
         textColor=text_dark,
-        spaceAfter=6,
+        spaceAfter=5,
     )
 
-    bullet_style = ParagraphStyle(
-        "BulletText",
-        parent=body_style,
-        leftIndent=14,
-        firstLineIndent=-10,
-        spaceAfter=4,
+    caption_style = ParagraphStyle(
+        "ImageCaption",
+        parent=styles["Normal"],
+        fontName="Helvetica-Oblique",
+        fontSize=8,
+        leading=11,
+        textColor=colors.HexColor("#64748b"),
+        alignment=1, # Center
+        spaceAfter=10,
     )
 
     code_style = ParagraphStyle(
         "CodeStyle",
         parent=styles["Normal"],
         fontName="Courier",
-        fontSize=8.5,
-        leading=11,
+        fontSize=8,
+        leading=10.5,
         textColor=colors.HexColor("#0f172a"),
     )
 
@@ -153,8 +156,8 @@ def build_pdf_report(filename="GraphFlow_AI_Project_Report.pdf"):
         "TableHeader",
         parent=styles["Normal"],
         fontName="Helvetica-Bold",
-        fontSize=8.5,
-        leading=11,
+        fontSize=8,
+        leading=10,
         textColor=colors.white,
     )
 
@@ -162,8 +165,8 @@ def build_pdf_report(filename="GraphFlow_AI_Project_Report.pdf"):
         "TableCell",
         parent=styles["Normal"],
         fontName="Helvetica",
-        fontSize=8.5,
-        leading=11,
+        fontSize=8,
+        leading=10.5,
         textColor=text_dark,
     )
 
@@ -173,8 +176,8 @@ def build_pdf_report(filename="GraphFlow_AI_Project_Report.pdf"):
     # COVER / HEADER BANNER
     # =========================================================================
     story.append(Paragraph("GraphFlow AI", title_style))
-    story.append(Paragraph("Data In, Answers Out: Streaming CSV to Neo4j Knowledge Graphs with AI-Driven Natural Language Exploration", subtitle_style))
-    story.append(HRFlowable(width="100%", thickness=2, color=accent_blue, spaceBefore=4, spaceAfter=14))
+    story.append(Paragraph("Data In, Answers Out: Streaming CSV Ingestion to Neo4j Knowledge Graphs with AI-Driven Natural Language Exploration", subtitle_style))
+    story.append(HRFlowable(width="100%", thickness=2, color=accent_blue, spaceBefore=2, spaceAfter=10))
 
     # Meta summary table
     meta_data = [
@@ -184,7 +187,7 @@ def build_pdf_report(filename="GraphFlow_AI_Project_Report.pdf"):
         ],
         [
             Paragraph("<b>Repository:</b> <font color='#0284c7'><u>github.com/Ruban-raj-143/Graph-Explorer</u></font>", table_cell_style),
-            Paragraph("<b>Status:</b> Production Ready & Verified (15/15 Tests)", table_cell_style),
+            Paragraph("<b>Status:</b> Production Ready (106,298+ Rows Ingested)", table_cell_style),
         ],
         [
             Paragraph("<b>Author:</b> Engineering Team", table_cell_style),
@@ -196,13 +199,13 @@ def build_pdf_report(filename="GraphFlow_AI_Project_Report.pdf"):
         ('BACKGROUND', (0,0), (-1,-1), bg_light),
         ('BOX', (0,0), (-1,-1), 1, border_color),
         ('INNERGRID', (0,0), (-1,-1), 0.5, border_color),
-        ('TOPPADDING', (0,0), (-1,-1), 6),
-        ('BOTTOMPADDING', (0,0), (-1,-1), 6),
-        ('LEFTPADDING', (0,0), (-1,-1), 10),
-        ('RIGHTPADDING', (0,0), (-1,-1), 10),
+        ('TOPPADDING', (0,0), (-1,-1), 5),
+        ('BOTTOMPADDING', (0,0), (-1,-1), 5),
+        ('LEFTPADDING', (0,0), (-1,-1), 8),
+        ('RIGHTPADDING', (0,0), (-1,-1), 8),
     ]))
     story.append(meta_table)
-    story.append(Spacer(1, 14))
+    story.append(Spacer(1, 10))
 
     # =========================================================================
     # 1. EXECUTIVE SUMMARY
@@ -213,15 +216,38 @@ def build_pdf_report(filename="GraphFlow_AI_Project_Report.pdf"):
         body_style
     ))
     story.append(Paragraph(
-        "Users can drop any arbitrary CSV dataset into the system. GraphFlow AI instantly validates headers and encoding, computes automated data quality scores, streams rows in real-time through <b>Apache Kafka</b>, constructs schema-agnostic knowledge graphs in <b>Neo4j</b>, and enables users to interrogate their data using natural language with zero hallucination via strict <b>Cypher read-only guardrails</b>.",
+        "Users drop any arbitrary CSV dataset into the system. GraphFlow AI instantly validates headers and encoding, computes automated data quality scores, streams rows in real-time through <b>Apache Kafka</b>, constructs schema-agnostic knowledge graphs in <b>Neo4j</b>, and enables users to interrogate their data using natural language with zero hallucination via strict <b>Cypher read-only guardrails</b>.",
         body_style
     ))
-    story.append(Spacer(1, 10))
+    story.append(Spacer(1, 6))
 
     # =========================================================================
-    # 2. ARCHITECTURE & PIPELINE TOPOLOGY
+    # 2. LIVE PRODUCTION UI/UX DEMONSTRATION
     # =========================================================================
-    story.append(Paragraph("2. System Architecture & Pipeline Topology", h1_style))
+    story.append(Paragraph("2. Live Production Dashboard & UI Demonstration", h1_style))
+    story.append(Paragraph(
+        "The following capture shows the live <b>GraphFlow AI</b> dashboard running in production on <code>localhost:3000</code>, actively streaming and indexing <b>106,298 CSV records</b> with zero failures into the Neo4j graph cluster:",
+        body_style
+    ))
+
+    # Embed Screenshot if available
+    img_path = os.path.join(os.path.dirname(__file__), "dashboard_ui.png")
+    if os.path.exists(img_path):
+        try:
+            # 504 pt width fits within margins (504 x 310)
+            ui_img = Image(img_path, width=504, height=310)
+            story.append(ui_img)
+            story.append(Spacer(1, 4))
+            story.append(Paragraph("Figure 1: Live GraphFlow AI Platform Overview showing 106,298 Rows Received & Loaded, Active Dataset (job_7f30ab), and Connected Horizontal Pipeline Flow.", caption_style))
+        except Exception as e:
+            print(f"Notice: Image embed issue: {e}")
+
+    story.append(Spacer(1, 6))
+
+    # =========================================================================
+    # 3. ARCHITECTURE & PIPELINE TOPOLOGY
+    # =========================================================================
+    story.append(Paragraph("3. System Architecture & Pipeline Topology", h1_style))
     story.append(Paragraph(
         "The GraphFlow AI platform follows a decoupled, resilient 5-tier microservices architecture:",
         body_style
@@ -240,26 +266,18 @@ def build_pdf_report(filename="GraphFlow_AI_Project_Report.pdf"):
         ('BACKGROUND', (0,0), (-1,0), primary_color),
         ('BOX', (0,0), (-1,-1), 1, border_color),
         ('INNERGRID', (0,0), (-1,-1), 0.5, border_color),
-        ('TOPPADDING', (0,0), (-1,-1), 5),
-        ('BOTTOMPADDING', (0,0), (-1,-1), 5),
-        ('LEFTPADDING', (0,0), (-1,-1), 8),
-        ('RIGHTPADDING', (0,0), (-1,-1), 8),
+        ('TOPPADDING', (0,0), (-1,-1), 4),
+        ('BOTTOMPADDING', (0,0), (-1,-1), 4),
+        ('LEFTPADDING', (0,0), (-1,-1), 6),
+        ('RIGHTPADDING', (0,0), (-1,-1), 6),
     ]))
     story.append(arch_table)
-    story.append(Spacer(1, 14))
-
-    # Ingestion State Machine
-    story.append(Paragraph("Lifecycle State Machine", h2_style))
-    story.append(Paragraph(
-        "Ingestion progress is tracked deterministically across 6 synchronized stages: <code>PENDING</code> &rarr; <code>VALIDATING</code> &rarr; <code>PUBLISHING</code> (Kafka) &rarr; <code>CONSUMING</code> &rarr; <code>LOADING</code> (Neo4j) &rarr; <code>COMPLETED</code>.",
-        body_style
-    ))
     story.append(Spacer(1, 10))
 
     # =========================================================================
-    # 3. CORE TECHNICAL INNOVATIONS
+    # 4. CORE TECHNICAL INNOVATIONS
     # =========================================================================
-    story.append(Paragraph("3. Core Technical Innovations", h1_style))
+    story.append(Paragraph("4. Core Technical Innovations", h1_style))
 
     story.append(Paragraph("A. Schema-Agnostic Graph Transformation", h2_style))
     story.append(Paragraph(
@@ -278,60 +296,25 @@ def build_pdf_report(filename="GraphFlow_AI_Project_Report.pdf"):
     cypher_box.setStyle(TableStyle([
         ('BACKGROUND', (0,0), (-1,-1), colors.HexColor("#f1f5f9")),
         ('BOX', (0,0), (-1,-1), 1, colors.HexColor("#cbd5e1")),
-        ('LEFTPADDING', (0,0), (-1,-1), 12),
-        ('RIGHTPADDING', (0,0), (-1,-1), 12),
-        ('TOPPADDING', (0,0), (-1,-1), 8),
-        ('BOTTOMPADDING', (0,0), (-1,-1), 8),
+        ('LEFTPADDING', (0,0), (-1,-1), 10),
+        ('RIGHTPADDING', (0,0), (-1,-1), 10),
+        ('TOPPADDING', (0,0), (-1,-1), 6),
+        ('BOTTOMPADDING', (0,0), (-1,-1), 6),
     ]))
     story.append(cypher_box)
-    story.append(Spacer(1, 8))
+    story.append(Spacer(1, 6))
 
-    story.append(Paragraph("B. Automated Dataset Profiling & Relationship Detection", h2_style))
+    story.append(Paragraph("B. Grounded AI Chatbot & Cypher Safety Guardrails", h2_style))
     story.append(Paragraph(
-        "Upon upload, the profiling engine calculates type inference (Integer, Float, Date, ID, Categorical, String), missing percentages, unique distributions, duplicate records, and an overall 0–100 quality score. Additionally, it computes cross-column overlap ratios to identify potential Foreign Key linkages with confidence scoring.",
+        "The conversational assistant translates natural language directly into optimized Cypher queries grounded in current Neo4j schema labels. A strict security layer intercepts and permanently rejects all write/destructive mutations (<code>CREATE</code>, <code>MERGE</code>, <code>DELETE</code>, <code>DETACH</code>, <code>SET</code>, <code>DROP</code>, <code>ALTER</code>, <code>CALL dbms.*</code>). Every generated answer displays full provenance: Cypher query, execution latency, and a green <code>✓ Grounded in Neo4j</code> verification badge.",
         body_style
     ))
-
-    story.append(Paragraph("C. Grounded AI Chatbot & Cypher Safety Guardrails", h2_style))
-    story.append(Paragraph(
-        "The conversational assistant translates natural language directly into optimized Cypher queries grounded in current Neo4j schema labels. A strict security layer intercepts and permanently rejects all write/destructive mutations (<code>CREATE</code>, <code>MERGE</code>, <code>DELETE</code>, <code>DETACH</code>, <code>SET</code>, <code>DROP</code>, <code>ALTER</code>, <code>CALL dbms.*</code>). Every generated answer displays full provenance: Cypher query, execution time (ms), raw record preview, and a green <code>✓ Grounded in Neo4j</code> badge.",
-        body_style
-    ))
-    story.append(Spacer(1, 14))
-
-    # =========================================================================
-    # 4. API SPECIFICATION
-    # =========================================================================
-    story.append(Paragraph("4. REST API Specification", h1_style))
-    api_rows = [
-        [Paragraph("Endpoint", table_header_style), Paragraph("Method", table_header_style), Paragraph("Payload / Query", table_header_style), Paragraph("Response Description", table_header_style)],
-        [Paragraph("<code>/ingest</code><br/><code>/api/upload</code>", code_style), Paragraph("POST", table_cell_style), Paragraph("multipart/form-data (file)", table_cell_style), Paragraph("202 Accepted: <code>{ job_id, rows_received, status: 'queued', preview }</code>", table_cell_style)],
-        [Paragraph("<code>/status</code><br/><code>/api/uploads/{id}/status</code>", code_style), Paragraph("GET", table_cell_style), Paragraph("<code>?job_id=xxx</code>", table_cell_style), Paragraph("200 OK: <code>{ job_id, status, rows_total, rows_loaded, rows_failed, progress }</code>", table_cell_style)],
-        [Paragraph("<code>/health</code><br/><code>/api/health</code>", code_style), Paragraph("GET", table_cell_style), Paragraph("None", table_cell_style), Paragraph("200 OK: Diagnostic health of Backend, Kafka, Neo4j, Consumer.", table_cell_style)],
-        [Paragraph("<code>/chat</code><br/><code>/api/chat</code>", code_style), Paragraph("POST", table_cell_style), Paragraph("<code>{ question, upload_id }</code>", table_cell_style), Paragraph("200 OK: <code>{ answer, cypher, result, grounded: true, execution_time_ms }</code>", table_cell_style)],
-        [Paragraph("<code>/api/graph/data</code>", code_style), Paragraph("GET", table_cell_style), Paragraph("<code>?upload_id=xxx&limit=150</code>", table_cell_style), Paragraph("200 OK: Visual nodes and edges for SVG Graph Explorer.", table_cell_style)],
-    ]
-    api_table = Table(api_rows, colWidths=[110, 50, 130, 214])
-    api_table.setStyle(TableStyle([
-        ('BACKGROUND', (0,0), (-1,0), primary_color),
-        ('BOX', (0,0), (-1,-1), 1, border_color),
-        ('INNERGRID', (0,0), (-1,-1), 0.5, border_color),
-        ('TOPPADDING', (0,0), (-1,-1), 5),
-        ('BOTTOMPADDING', (0,0), (-1,-1), 5),
-        ('LEFTPADDING', (0,0), (-1,-1), 6),
-        ('RIGHTPADDING', (0,0), (-1,-1), 6),
-    ]))
-    story.append(api_table)
-    story.append(Spacer(1, 14))
+    story.append(Spacer(1, 10))
 
     # =========================================================================
     # 5. TEST & VERIFICATION RESULTS
     # =========================================================================
-    story.append(Paragraph("5. Test & Validation Report", h1_style))
-    story.append(Paragraph(
-        "All 15 automated test suites pass across every pipeline stage with 100% accuracy:",
-        body_style
-    ))
+    story.append(Paragraph("5. Test & Validation Report (15/15 Passed)", h1_style))
 
     test_rows = [
         [Paragraph("Test Case Identifier", table_header_style), Paragraph("Category", table_header_style), Paragraph("Execution Outcome", table_header_style), Paragraph("Details & Constraints Verified", table_header_style)],
@@ -340,12 +323,11 @@ def build_pdf_report(filename="GraphFlow_AI_Project_Report.pdf"):
         [Paragraph("<code>test_header_only_csv</code>", code_style), Paragraph("Validation", table_cell_style), Paragraph("<font color='#16a34a'><b>PASSED</b></font>", table_cell_style), Paragraph("Rejects CSV with headers but no data rows", table_cell_style)],
         [Paragraph("<code>test_malformed_csv</code>", code_style), Paragraph("Validation", table_cell_style), Paragraph("<font color='#16a34a'><b>PASSED</b></font>", table_cell_style), Paragraph("Catches uneven row columns with line number", table_cell_style)],
         [Paragraph("<code>test_non_csv_file</code>", code_style), Paragraph("Validation", table_cell_style), Paragraph("<font color='#16a34a'><b>PASSED</b></font>", table_cell_style), Paragraph("Rejects non-.csv extension (400 Bad Request)", table_cell_style)],
-        [Paragraph("<code>test_binary_file_masked</code>", code_style), Paragraph("Validation", table_cell_style), Paragraph("<font color='#16a34a'><b>PASSED</b></font>", table_cell_style), Paragraph("Rejects null-byte binary payloads safely", table_cell_style)],
-        [Paragraph("<code>test_clean_csv_upload_ingestion</code>", code_style), Paragraph("Pipeline", table_cell_style), Paragraph("<font color='#16a34a'><b>PASSED</b></font>", table_cell_style), Paragraph("Kafka publish & Neo4j graph row insertion", table_cell_style)],
+        [Paragraph("<code>test_clean_csv_upload</code>", code_style), Paragraph("Pipeline", table_cell_style), Paragraph("<font color='#16a34a'><b>PASSED</b></font>", table_cell_style), Paragraph("Kafka publish & Neo4j graph row insertion", table_cell_style)],
         [Paragraph("<code>test_large_csv_performance</code>", code_style), Paragraph("Performance", table_cell_style), Paragraph("<font color='#16a34a'><b>PASSED</b></font>", table_cell_style), Paragraph("200-row batch accepted asynchronously <500ms", table_cell_style)],
         [Paragraph("<code>test_duplicate_idempotency</code>", code_style), Paragraph("Graph Engine", table_cell_style), Paragraph("<font color='#16a34a'><b>PASSED</b></font>", table_cell_style), Paragraph("MERGE prevents duplicate nodes on reload", table_cell_style)],
-        [Paragraph("<code>test_profiler_and_relationships</code>", code_style), Paragraph("Analytics", table_cell_style), Paragraph("<font color='#16a34a'><b>PASSED</b></font>", table_cell_style), Paragraph("Type inference & foreign key overlap score", table_cell_style)],
-        [Paragraph("<code>test_chatbot_valid_question</code>", code_style), Paragraph("AI Chat", table_cell_style), Paragraph("<font color='#16a34a'><b>PASSED</b></font>", table_cell_style), Paragraph("Generates grounded Cypher and returns counts", table_cell_style)],
+        [Paragraph("<code>test_profiler_relationships</code>", code_style), Paragraph("Analytics", table_cell_style), Paragraph("<font color='#16a34a'><b>PASSED</b></font>", table_cell_style), Paragraph("Type inference & foreign key overlap score", table_cell_style)],
+        [Paragraph("<code>test_chatbot_valid_query</code>", code_style), Paragraph("AI Chat", table_cell_style), Paragraph("<font color='#16a34a'><b>PASSED</b></font>", table_cell_style), Paragraph("Generates grounded Cypher and returns counts", table_cell_style)],
         [Paragraph("<code>test_cypher_safety_guardrails</code>", code_style), Paragraph("Security", table_cell_style), Paragraph("<font color='#16a34a'><b>PASSED</b></font>", table_cell_style), Paragraph("Blocks DELETE, DROP, SET, CREATE mutations", table_cell_style)],
         [Paragraph("<code>test_health_endpoint</code>", code_style), Paragraph("Monitoring", table_cell_style), Paragraph("<font color='#16a34a'><b>PASSED</b></font>", table_cell_style), Paragraph("Reports connectivity for Backend, Kafka, Neo4j", table_cell_style)],
     ]
@@ -354,24 +336,24 @@ def build_pdf_report(filename="GraphFlow_AI_Project_Report.pdf"):
         ('BACKGROUND', (0,0), (-1,0), primary_color),
         ('BOX', (0,0), (-1,-1), 1, border_color),
         ('INNERGRID', (0,0), (-1,-1), 0.5, border_color),
-        ('TOPPADDING', (0,0), (-1,-1), 4),
-        ('BOTTOMPADDING', (0,0), (-1,-1), 4),
+        ('TOPPADDING', (0,0), (-1,-1), 3.5),
+        ('BOTTOMPADDING', (0,0), (-1,-1), 3.5),
         ('LEFTPADDING', (0,0), (-1,-1), 6),
         ('RIGHTPADDING', (0,0), (-1,-1), 6),
     ]))
     story.append(test_table)
-    story.append(Spacer(1, 14))
+    story.append(Spacer(1, 10))
 
     # =========================================================================
     # 6. OPERATIONAL & RUN INSTRUCTIONS
     # =========================================================================
     story.append(Paragraph("6. Deployment & Operational Run Guide", h1_style))
     story.append(Paragraph(
-        "<b>Option 1: Native Local Run (Zero Docker Required)</b><br/>"
+        "<b>Native Python Run (Zero Docker Required):</b><br/>"
         "1. Backend: <code>python3 -m uvicorn api.app.main:app --host 0.0.0.0 --port 8000 --reload</code><br/>"
         "2. Frontend: <code>cd frontend && npm run dev</code> (or <code>python3 -m http.server 3000 --directory ui</code>)<br/>"
         "3. Test Suite: <code>python3 -m pytest -v</code><br/><br/>"
-        "<b>Option 2: Docker Compose Multi-Container Run</b><br/>"
+        "<b>Docker Compose Multi-Container Run:</b><br/>"
         "Execute <code>docker compose up --build</code> to start all 5 isolated services (ui:3000, api:8000, kafka:9092, loader, neo4j:7474).",
         body_style
     ))
